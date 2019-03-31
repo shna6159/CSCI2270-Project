@@ -14,6 +14,10 @@ PriorityQueue::PriorityQueue(int size, int huffmanSize)
   maxQueueSize = size;
   currentQueueSize = 0;
   priorityQueue = new Node[size];
+
+  huffmanQueue = new Node[huffmanSize];
+  huffCurrentQueueSize = 0;
+  int huffMaxQueueSize = huffmanSize;
 }
 
 PriorityQueue::~PriorityQueue()
@@ -78,17 +82,17 @@ void PriorityQueue::enqueue(char _symbol, float _frequency)
   currentQueueSize++;
 }
 
-void PriorityQueue::repairDownward(int nodeIndex)
+/*void PriorityQueue::repairDownward(int nodeIndex)
 {
   int max = nodeIndex;
   int l = leftChild(nodeIndex);
   int r = rightChild(nodeIndex);
 
-  if(l > nodeIndex && priorityQueue[l].frequency < priorityQueue[max].frequency && l < currentQueueSize)
+  if(l > nodeIndex && l < currentQueueSize && priorityQueue[l].frequency < priorityQueue[max].frequency)
   {
     max = l;
   }
-  else if(r > nodeIndex && priorityQueue[r].frequency < priorityQueue[max].frequency && r < currentQueueSize)
+  else if(r > nodeIndex && r < currentQueueSize && priorityQueue[r].frequency < priorityQueue[max].frequency)
   {
     max = r;
   }
@@ -118,7 +122,7 @@ void PriorityQueue::dequeue()
     currentQueueSize--;
     repairDownward(0);
   }
-}
+}*/
 
 void PriorityQueue::print()
 {
@@ -128,42 +132,79 @@ void PriorityQueue::print()
   }
 }
 
-void PriorityQueue::createHuffmanTree()
+Node* PriorityQueue::getQueue()
 {
-  /*
-  -----Sources Used-----
-  https://courses.cs.washington.edu/courses/cse143/19wi/lectures/03-08/slides/huffman_lecture.pdf
-  https://en.wikipedia.org/wiki/Huffman_coding
-  https://www.youtube.com/watch?v=co4_ahEDCho
-
-  */
-
-  std::cout<< currentQueueSize << std::endl;
-  while(currentQueueSize > 1)
-  {
-    Node* left;
-    Node* right;
-    Node* parent;
-
-    //Remove lowest node in queue
-    std::cout<< peek().frequency << std::endl;
-    left->frequency = peek().frequency;
-    left->symbol = peek().symbol;
-    dequeue();
-
-    //Remove second lowest node in queue
-    //std::cout<< peek().frequency << std::endl;
-    right->frequency = peek().frequency;
-    right->symbol = peek().symbol;
-    dequeue();
-    //combine 2 lowest nodes into one node
-    parent->frequency = left->frequency + right->frequency;
-    parent->leftChild = left;
-    parent->rightChild = right;
-
-    //add combined node back to queue
-    enqueue(' ', parent->frequency);
-    std::cout<< currentQueueSize;
-    currentQueueSize--;
-  }
+  return priorityQueue;
 }
+
+// void PriorityQueue::createHuffmanTree()
+// {
+//   /*
+//   -----Sources Used-----
+//   https://courses.cs.washington.edu/courses/cse143/19wi/lectures/03-08/slides/huffman_lecture.pdf
+//   https://en.wikipedia.org/wiki/Huffman_coding
+//   https://www.youtube.com/watch?v=co4_ahEDCho
+//   */
+//
+//   while(currentQueueSize > 1)
+//   {
+//     Node* left = new Node();
+//     Node* right = new Node();
+//     Node* parent = new Node();
+//     bool firstTwoPop = false;
+//
+//
+//
+//     //Remove lowest node in queue
+//     if((currentQueueSize > 2 && firstTwoPop == false) || currentQueueSize <= 2)
+//     {
+//       left->frequency = peek().frequency;
+//       left->symbol = peek().symbol;
+//       dequeue();
+//
+//       right->frequency = peek().frequency;
+//       right->symbol = peek().symbol;
+//       dequeue();
+//
+//       parent->frequency = left->frequency + right->frequency;
+//       parent->leftChild = left;
+//       parent->rightChild = right;
+//       std::cout<< "Parent Frequency: " << parent->frequency << std::endl;
+//       //add combined node back to queue
+//       enqueue(' ', parent->frequency);
+//       firstTwoPop = true;
+//       currentQueueSize--;
+//     }
+//     else
+//     {
+//       if(peek().leftChild == 0)
+//       {
+//         left->frequency = peek().frequency;
+//         left->symbol = peek().symbol;
+//         dequeue();
+//       }
+//
+//       //Remove second lowest node in queue
+//       if(peek().rightChild == 0)
+//       {
+//         right->frequency = peek().frequency;
+//         right->symbol = peek().symbol;
+//         dequeue();
+//       }
+//       else
+//       {
+//         //combine 2 lowest nodes into one node
+//         parent->frequency = left->frequency + right->frequency;
+//         parent->leftChild = left;
+//         parent->rightChild = right;
+//         std::cout<< "Parent Frequency: " << parent->frequency << std::endl;
+//         //add combined node back to queue
+//         enqueue(' ', parent->frequency);
+//         currentQueueSize--;
+//       }
+//     }
+//     std::cout<< "Parent: " << parent << std::endl;
+//     std::cout<< "leftChild: " << parent->leftChild << std::endl;
+//     std::cout<< "rightChild" << parent->rightChild << std::endl << std::endl;
+//   }
+// }

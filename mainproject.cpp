@@ -1,4 +1,5 @@
 #include "PriorityQueue.hpp"
+#include "Queue.hpp"
 #include <iostream>
 
 int main(int argc, char const *argv[])
@@ -28,17 +29,27 @@ int main(int argc, char const *argv[])
   std::cout<< "---- peek Test ----" << std::endl << std::endl;
   std::cout<< pq.peek().symbol << " : " << pq.peek().frequency << std::endl;
 
-  std::cout<< "---- createHuffmanTree Test ----" << std::endl << std::endl;
-  pq.createHuffmanTree(20);
-  pq.print();
-
-  //____dequeue/repairDownward Test____
+  /*//____dequeue/repairDownward Test____
   std::cout<< "---- dequeue/repairDownward Test ----" << std::endl << std::endl;
+
+  for(int i = 0; i < 5; i++)
+  {
+    pq.enqueue(cArr[i], iArr[i]);
+  }
+
   for(int i = 0; i < 5; i++)
   {
     std::cout<< pq.peek().symbol << " : " << pq.peek().frequency << std::endl;
     pq.dequeue();
-  }
+  }*/
+
+
+
+//______Tests for Queue______
+  Queue huff;
+  std::cout<< "---- createHuffmanTree Test ----" << std::endl << std::endl;
+  huff.createHuffmanTree(pq.getQueue());
+
 
   return 0;
 }

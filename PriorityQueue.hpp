@@ -1,11 +1,4 @@
-struct Node
-{
-  char symbol = ' ';
-  float frequency = 0;
-  Node* parent = 0;
-  Node* leftChild = 0;
-  Node* rightChild = 0;
-};
+#include "Node.hpp"
 
 class PriorityQueue
 {
@@ -32,9 +25,11 @@ public:
   /*Takes nodes with 2 lowest freqiencies, and makes them the
   children of node of sum of their frequencies. Root node is
   the sum of all frequencies*/
-  void createHuffmanTree();
+  //void createHuffmanTree();
 
-  void printHuffman();
+  Node* getQueue();
+
+
 
 private:
 
@@ -44,4 +39,9 @@ private:
   Node* priorityQueue;
   int currentQueueSize;
   int maxQueueSize;
+
+  Node* huffmanQueue;
+  int huffCurrentQueueSize;
+  int huffMaxQueueSize;
+
 };
