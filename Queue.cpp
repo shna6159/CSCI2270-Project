@@ -23,5 +23,5 @@ Node Queue::pop()
 
 void Queue::createHuffmanTree(Node* priorityQueueArr)
 {
-  
+
 }
