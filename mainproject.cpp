@@ -46,7 +46,7 @@ int main(int argc, char const *argv[])
 
 
 //______Tests for Queue______
-  Queue huff;
+  Queue huff(5);
   std::cout<< "---- createHuffmanTree Test ----" << std::endl << std::endl;
   huff.createHuffmanTree(pq.getQueue());
 
