@@ -140,6 +140,7 @@ Node Queue::peek()
 
 void Queue::createHuffmanTree(Node* priorityQueueArr)
 {
+<<<<<<< HEAD
   Node* left = new Node();
   Node* right = new Node();
   Node* parent = new Node();
@@ -178,4 +179,7 @@ void Queue::createHuffmanTree(Node* priorityQueueArr)
 
     count--;
   }
+=======
+
+>>>>>>> 3ba27039364d30a2cbab23d88aa55cd7ad8038e4
 }
