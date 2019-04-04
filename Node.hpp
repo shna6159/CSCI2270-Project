@@ -2,7 +2,7 @@
 #define NODE_H
 struct Node
 {
-  char symbol = ' ';
+  char symbol = '\0';
   float frequency = 0;
   Node* parent = 0;
   Node* leftChild = 0;
