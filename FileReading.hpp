@@ -1,6 +1,8 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <set>
+#include<algorithm>
 
 struct Node
 {
@@ -10,6 +12,7 @@ struct Node
   Node* leftChild = 0;
   Node* rightChild = 0;
 
+//Source: https://cboard.cprogramming.com/cplusplus-programming/89738-make_heap-comparison.html
   bool operator()(Node* &a, Node* &b)
   {
     return a->frequency > b->frequency;
@@ -24,15 +27,17 @@ class FileReading
     FileReading();
     void postOrder(Node* T);
     void readFile(std::string fileName);
+    void createTable(Node* root, int top);
     Node* getRoot();
   private:
     Node* createHuffmanTree();
-    void createTable();
+    Node* searchQueue(char symbol);
 
 //Variables
   private:
-    std::priority_queue <Node*, std::vector<Node*>, Node> pq;
+    std::vector <Node*> pq;
     std::queue<Node*> huffQ;
+    std::set<Node*> huffmanTree;
     std::vector <char> symbolArr;
     std::vector <float> frequencyArr;
     Node* root;
