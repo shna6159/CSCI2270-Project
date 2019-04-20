@@ -1,6 +1,7 @@
 #include <iostream>
 #include <queue>
 #include <vector>
+#include <fstream>
 #include "FileReading.hpp"
 #define COUNT 10
 
@@ -44,7 +45,12 @@ int main()
   std::cout<< "Print Tree" << std::endl << std::endl;
   print2DUtil(3, fr.getRoot());
   std::cout<< "Print Codes" << std::endl << std::endl;
-  fr.createTable(fr.getRoot(), 0);
+  std::vector<bool> code;
+  std::ofstream compressedFile;
+  compressedFile.open("codes.txt", std::ofstream::binary);
+  fr.createTable(fr.getRoot(), code, compressedFile);
+  fr.compress("TestFile.txt", "compressedFile.txt");
+  fr.decompress("decompressedFile.txt", "compressedFile.txt");
 
   return 0;
 }

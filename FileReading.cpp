@@ -5,6 +5,7 @@
 #include <string>
 #include <set>
 #include <algorithm>
+#include <string>
 #include "FileReading.hpp"
 
 Node* FileReading::getRoot()
@@ -111,8 +112,8 @@ Node* FileReading::createHuffmanTree()
     /*combine 2 lowest nodes into one parent node
     with lowest nodes as its children*/
     parent->frequency = left->frequency + right->frequency;
-    parent->leftChild = left;
-    parent->rightChild = right;
+    parent->leftChild = right;
+    parent->rightChild = left;
     std::cout<< "Parent Frequency: " << parent->frequency <<  ", '" << parent->symbol << "'" << std::endl << std::endl;
     //add combined node back to queue
     huffQ.push(parent);
@@ -122,33 +123,29 @@ Node* FileReading::createHuffmanTree()
   root = huffQ.front();
 }
 
-void FileReading::createTable(Node* root, int top)
+std::vector<bool> addBit(std::vector<bool> code, bool bit)
 {
-  //std::vector<char, int> table;
-  std::vector<int> code;
+  code.push_back(bit);
+  return code;
+}
 
-  if(root->leftChild != 0)
+void FileReading::createTable(Node* root, std::vector<bool> code, std::ofstream &compressedFile)
+{
+  //Instead of writing an int (0, or 1), write bits to file
+  //source: https://www.geeksforgeeks.org/huffman-coding-greedy-algo-3/
+  if(root == 0)
   {
-    code.insert(code.end(), 0);
-    createTable(root->leftChild, top + 1);
+    return;
+  }
+  if(root ->symbol != '\0')
+  {
+    compressedFile<< root->symbol;
+    for(int i = 0; i < code.size(); i++) compressedFile<< code[i];
+    compressedFile<< std::endl;
   }
 
-  if(root->rightChild != 0)
-  {
-    code.insert(code.end(), 1);
-    createTable(root->rightChild, top + 1);
-  }
-
-  if(!(root->leftChild) && !(root->rightChild))
-  {
-    printf("%c: ", root->symbol);
-    std::cout<< "Size: " << code.size() << std::endl;
-    for(int i = 0; i < code.size(); i++)
-    {
-      std::cout<< code[i];
-    }
-  }
-
+  createTable(root->leftChild, addBit(code, false), compressedFile);
+  createTable(root->rightChild, addBit(code, true), compressedFile);
 }
 
 void FileReading::postOrder(Node* T)
@@ -164,4 +161,73 @@ void FileReading::postOrder(Node* T)
     postOrder(T->rightChild);
   }
   return;
+}
+
+void FileReading::putCodesInArray()
+{
+  std::ifstream codesFile;
+  codesFile.open("codes.txt");
+  std::string codesLine;
+
+  //Read codes into prefixChar array;
+  if(codesFile.is_open())
+  {
+    while(std::getline(codesFile, codesLine))
+    {
+      char symbol = codesLine[0];
+      std::string code = codesLine.substr(1, codesLine.length() - 1);
+      prefixChar[symbol] = code;
+    }
+  }
+}
+
+void FileReading::compress(std::string fileName, std::string compress)
+{
+  std::ifstream file;
+  std:: ofstream compressedFile;
+  compressedFile.open(compress, std::ofstream::binary);
+  file.open(fileName);
+  std::string line;
+
+  putCodesInArray();
+
+  //compress file
+  if(file.is_open())
+  {
+    while(getline(file, line))
+    {
+      for(int i = 0; i < line.length(); i++)
+      {
+        compressedFile<< prefixChar[line[i]];
+      }
+      compressedFile<< std::endl;
+    }
+  }
+  compressedFile.close();
+}
+
+void FileReading::decompress(std::string decompress, std::string compressed)
+{
+  std::ofstream decompressedFile;
+  decompressedFile.open(decompress);
+  std::ifstream compressedFile;
+  compressedFile.open(compressed);
+  std::string code;
+
+  if(compressedFile.is_open())
+  {
+    while(std::getline(compressedFile, code, ' ') || std::getline(compressedFile, code))
+    {
+      for(int i = 0; i < 256; i++)
+      {
+        if(code == prefixChar[i])
+        {
+          char symbol = i;
+          decompressedFile<< symbol;
+        }
+      }
+    }
+  }
+
+  decompressedFile.close();
 }

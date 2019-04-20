@@ -3,6 +3,8 @@
 #include <vector>
 #include <set>
 #include<algorithm>
+#include <fstream>
+#include <string>
 
 struct Node
 {
@@ -27,11 +29,14 @@ class FileReading
     FileReading();
     void postOrder(Node* T);
     void readFile(std::string fileName);
-    void createTable(Node* root, int top);
+    void createTable(Node* root, std::vector<bool> code, std::ofstream &compressedFile);
     Node* getRoot();
+  void compress(std::string fileName, std::string compress);
+  void decompress(std::string decompress, std::string compressed);
   private:
     Node* createHuffmanTree();
     Node* searchQueue(char symbol);
+    void putCodesInArray();
 
 //Variables
   private:
@@ -40,6 +45,7 @@ class FileReading
     std::set<Node*> huffmanTree;
     std::vector <char> symbolArr;
     std::vector <float> frequencyArr;
+    std::string prefixChar[256];
     Node* root;
 
 };
