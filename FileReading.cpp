@@ -166,7 +166,7 @@ void FileReading::postOrder(Node* T)
 void FileReading::putCodesInArray()
 {
   std::ifstream codesFile;
-  codesFile.open("codes.txt");
+  codesFile.open("codes.bin");
   std::string codesLine;
 
   //Read codes into prefixChar array;
@@ -198,7 +198,7 @@ void FileReading::compress(std::string fileName, std::string compress)
     {
       for(int i = 0; i < line.length(); i++)
       {
-        compressedFile<< prefixChar[line[i]];
+        compressedFile<< prefixChar[line[i]] << " ";
       }
       compressedFile<< std::endl;
     }

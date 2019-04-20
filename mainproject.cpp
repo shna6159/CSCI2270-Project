@@ -47,10 +47,10 @@ int main()
   std::cout<< "Print Codes" << std::endl << std::endl;
   std::vector<bool> code;
   std::ofstream compressedFile;
-  compressedFile.open("codes.txt", std::ofstream::binary);
+  compressedFile.open("codes.bin", std::ofstream::binary);
   fr.createTable(fr.getRoot(), code, compressedFile);
-  fr.compress("TestFile.txt", "compressedFile.txt");
-  fr.decompress("decompressedFile.txt", "compressedFile.txt");
+  fr.compress("TestFile.txt", "compressedFile.bin");
+  fr.decompress("decompressedFile.txt", "compressedFile.bin");
 
   return 0;
 }
