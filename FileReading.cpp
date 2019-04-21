@@ -214,11 +214,11 @@ void FileReading::compress(std::string fileName, std::string compress)
 
     for(int j = 0; j < filledTo; j += 8)
     {
-      for(int i = j; i < 8; ++i)
+      for(int i = j; i < (j + 8); ++i)
       {
         if(allBits[i] == '1') byte |= 1 << (7 - i);
-        compressedFile<<byte;
       }
+      compressedFile<<byte;
       comp[count] = byte;
       count++;
     }
