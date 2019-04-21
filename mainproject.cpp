@@ -39,18 +39,19 @@ int main()
   char cArr[5] = {'E', 'A', 'D', 'B', 'C'};
   float iArr[5] = {2,3,4,5,6};
   FileReading fr;
-  fr.readFile("TestFile.txt");
-  std::cout<< "Post Order" << std::endl << std::endl;
-  fr.postOrder(fr.getRoot());
-  std::cout<< "Print Tree" << std::endl << std::endl;
-  print2DUtil(3, fr.getRoot());
-  std::cout<< "Print Codes" << std::endl << std::endl;
-  std::vector<bool> code;
-  std::ofstream compressedFile;
-  compressedFile.open("codes.bin", std::ofstream::binary);
-  fr.createTable(fr.getRoot(), code, compressedFile);
-  fr.compress("TestFile.txt", "compressedFile.bin");
-  fr.decompress("decompressedFile.txt", "compressedFile.bin");
+  // fr.readFile("TestFile.txt");
+  // std::cout<< "Post Order" << std::endl << std::endl;
+  // fr.postOrder(fr.getRoot());
+  // std::cout<< "Print Tree" << std::endl << std::endl;
+  // print2DUtil(3, fr.getRoot());
+  // std::cout<< "Print Codes" << std::endl << std::endl;
+  // std::vector<bool> code;
+  // std::ofstream compressedFile;
+  // compressedFile.open("codes.bin", std::ofstream::binary);
+  // fr.createTable(fr.getRoot(), code, compressedFile);
+  // fr.compress("TestFile.txt", "compressedFile.bin");
+  // fr.decompress("decompressedFile.txt", "compressedFile.bin");
+  fr.readAndCompress("TestFile.txt","compressedFile.bin", "decompressedFile.txt");
 
   return 0;
 }

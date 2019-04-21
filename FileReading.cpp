@@ -6,7 +6,9 @@
 #include <set>
 #include <algorithm>
 #include <string>
+#include <math.h>
 #include "FileReading.hpp"
+
 
 Node* FileReading::getRoot()
 {
@@ -99,14 +101,11 @@ Node* FileReading::createHuffmanTree()
     Node* right = new Node();
     Node* parent = new Node();
 
-    //left->frequency = huffQ.front()->frequency;
     left = huffQ.front();
-    std::cout<< "leftChild frequency: " << huffQ.front()->frequency <<  ", '" << huffQ.front()->symbol << "'" << std::endl;
     huffQ.pop();
 
     //Remove lowest frequency node in queue
     right = huffQ.front();
-    std::cout<< "rightChild frequency: " << huffQ.front()->frequency << ", '" << huffQ.front()->symbol << "'" << std::endl;
     huffQ.pop();
 
     /*combine 2 lowest nodes into one parent node
@@ -114,10 +113,8 @@ Node* FileReading::createHuffmanTree()
     parent->frequency = left->frequency + right->frequency;
     parent->leftChild = right;
     parent->rightChild = left;
-    std::cout<< "Parent Frequency: " << parent->frequency <<  ", '" << parent->symbol << "'" << std::endl << std::endl;
     //add combined node back to queue
     huffQ.push(parent);
-    std::cout<< "_____________________________________" << std::endl << std::endl;
   }
 
   root = huffQ.front();
@@ -144,8 +141,8 @@ void FileReading::createTable(Node* root, std::vector<bool> code, std::ofstream 
     compressedFile<< std::endl;
   }
 
-  createTable(root->leftChild, addBit(code, false), compressedFile);
-  createTable(root->rightChild, addBit(code, true), compressedFile);
+  createTable(root->leftChild, addBit(code, true), compressedFile);
+  createTable(root->rightChild, addBit(code, false), compressedFile);
 }
 
 void FileReading::postOrder(Node* T)
@@ -184,10 +181,13 @@ void FileReading::putCodesInArray()
 void FileReading::compress(std::string fileName, std::string compress)
 {
   std::ifstream file;
-  std:: ofstream compressedFile;
+  std::ofstream compressedFile;
   compressedFile.open(compress, std::ofstream::binary);
   file.open(fileName);
   std::string line;
+  char allBits[200];
+  int filledTo = 0;
+  unsigned char byte = 0;
 
   putCodesInArray();
 
@@ -196,12 +196,35 @@ void FileReading::compress(std::string fileName, std::string compress)
   {
     while(getline(file, line))
     {
+      //put all codes into an array
       for(int i = 0; i < line.length(); i++)
       {
-        compressedFile<< prefixChar[line[i]] << " ";
+        std::string code = prefixChar[line[i]];
+        for(int j = 0; j < code.length(); j++)
+        {
+          allBits[filledTo] = code[j];
+          filledTo++;
+        }
       }
-      compressedFile<< std::endl;
     }
+    //split array into groups of 8
+    //Source: https://stackoverflow.com/questions/29123959/convert-a-char-array-of-0-and-1-to-bytes-in-c
+    int count = 0;
+    uint16_t comp[(filledTo + 8 - 1) / 8];
+
+    for(int j = 0; j < filledTo; j += 8)
+    {
+      for(int i = j; i < 8; ++i)
+      {
+        if(allBits[i] == '1') byte |= 1 << (7 - i);
+        compressedFile<<byte;
+      }
+      comp[count] = byte;
+      count++;
+    }
+
+    //Place bytes into new array. Size of array is rounded up
+
   }
   compressedFile.close();
 }
@@ -211,7 +234,7 @@ void FileReading::decompress(std::string decompress, std::string compressed)
   std::ofstream decompressedFile;
   decompressedFile.open(decompress);
   std::ifstream compressedFile;
-  compressedFile.open(compressed);
+  compressedFile.open(compressed, std::ifstream::binary);
   std::string code;
 
   if(compressedFile.is_open())
@@ -222,12 +245,21 @@ void FileReading::decompress(std::string decompress, std::string compressed)
       {
         if(code == prefixChar[i])
         {
-          char symbol = i;
-          decompressedFile<< symbol;
+          decompressedFile<< char(i);
         }
       }
     }
   }
 
   decompressedFile.close();
+}
+
+void FileReading::readAndCompress(std::string inputFile, std::string compressedFile, std::string decompressedFile)
+{
+  std::vector<bool> code;
+  std::ofstream compressed;
+  readFile(inputFile);
+  createTable(root, code, compressed);
+  compress(inputFile, compressedFile);
+  decompress(decompressedFile, compressedFile);
 }

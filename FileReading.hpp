@@ -27,16 +27,18 @@ class FileReading
 //Functions
   public:
     FileReading();
-    void postOrder(Node* T);
-    void readFile(std::string fileName);
-    void createTable(Node* root, std::vector<bool> code, std::ofstream &compressedFile);
-    Node* getRoot();
-  void compress(std::string fileName, std::string compress);
-  void decompress(std::string decompress, std::string compressed);
+    void readAndCompress(std::string inputFile, std::string compressedFile, std::string decompressedFile);
+
   private:
     Node* createHuffmanTree();
     Node* searchQueue(char symbol);
     void putCodesInArray();
+    void postOrder(Node* T);
+    void readFile(std::string fileName);
+    void createTable(Node* root, std::vector<bool> code, std::ofstream &compressedFile);
+    Node* getRoot();
+    void compress(std::string fileName, std::string compress);
+    void decompress(std::string decompress, std::string compressed);
 
 //Variables
   private:
