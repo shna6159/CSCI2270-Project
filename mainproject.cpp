@@ -3,6 +3,7 @@
 #include <vector>
 #include <fstream>
 #include "FileReading.hpp"
+using namespace std;
 #define COUNT 10
 
 void print2DUtilHelper(Node *currNode, int space)
@@ -52,6 +53,22 @@ int main()
   // fr.compress("TestFile.txt", "compressedFile.bin");
   // fr.decompress("decompressedFile.txt", "compressedFile.bin");
   fr.readAndCompress("TestFile.txt","compressedFile.bin", "decompressedFile.txt");
+
+  streampos begin,end;
+  ifstream myfile ("compressedFile.bin", ios::binary);
+  begin = myfile.tellg();
+  myfile.seekg (0, ios::end);
+  end = myfile.tellg();
+  myfile.close();
+  std::cout << "size is: " << (end-begin) << " bytes.\n";
+
+  streampos b,e;
+  ifstream dec ("TestFile.txt", ios::binary);
+  begin = dec.tellg();
+  dec.seekg (0, ios::end);
+  end = dec.tellg();
+  dec.close();
+  std::cout << "size is: " << (e-b) << " bytes.\n";
 
   return 0;
 }

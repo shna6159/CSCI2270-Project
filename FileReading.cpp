@@ -137,7 +137,10 @@ void FileReading::createTable(Node* root, std::vector<bool> code, std::ofstream 
   if(root ->symbol != '\0')
   {
     compressedFile<< root->symbol;
-    for(int i = 0; i < code.size(); i++) compressedFile<< code[i];
+    for(int i = 0; i < code.size(); i++)
+    {
+      compressedFile<< code[i];
+    }
     compressedFile<< std::endl;
   }
 
@@ -185,7 +188,7 @@ void FileReading::compress(std::string fileName, std::string compress)
   compressedFile.open(compress, std::ofstream::binary);
   file.open(fileName);
   std::string line;
-  char allBits[200];
+  std::vector<char> allBits;
   int filledTo = 0;
   unsigned char byte = 0;
 
@@ -196,13 +199,17 @@ void FileReading::compress(std::string fileName, std::string compress)
   {
     while(getline(file, line))
     {
+      std::cout<< "Line: \'" << line << "\'" << std::endl;
       //put all codes into an array
       for(int i = 0; i < line.length(); i++)
       {
+        std::cout<< "Code: " << prefixChar[line[i]] << std::endl;
+
         std::string code = prefixChar[line[i]];
         for(int j = 0; j < code.length(); j++)
         {
-          allBits[filledTo] = code[j];
+          std::cout<< "filledTo: " << filledTo << std::endl;
+        //  allBits[filledTo] = code[j];
           filledTo++;
         }
       }
@@ -258,6 +265,7 @@ void FileReading::readAndCompress(std::string inputFile, std::string compressedF
 {
   std::vector<bool> code;
   std::ofstream compressed;
+  compressed.open("codes.bin");
   readFile(inputFile);
   createTable(root, code, compressed);
   compress(inputFile, compressedFile);
