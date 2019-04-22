@@ -31,7 +31,7 @@ void RLE(string S,char* outFile)
             i++; 
             counter++; 
         } 
-        fileo << counter << S[i]<<" "; // writing code to another file
+        fileo << counter<<" "<< S[i]<<" "; // writing code to another file
         cout << counter << S[i]<<" "; // printing out code
     } 
     fileo.close();
