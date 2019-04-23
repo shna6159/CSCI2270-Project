@@ -8,6 +8,7 @@
 #include <string>
 #include <math.h>
 #include "FileReading.hpp"
+#include <bitset>
 
 
 Node* FileReading::getRoot()
@@ -67,11 +68,12 @@ void FileReading::readFile(std::string fileName)
   //Remove duplicate elements from pq
   for(int i = 0; i < pq.size(); i++)
   {
-    for(int j = i - 1; j < pq.size(); j++)
+    for(int j = i + 1; j < pq.size(); j++)
     {
       if(pq[i]->symbol == pq[j]->symbol)
       {
         pq.erase(pq.begin() + j);
+        j--;
       }
     }
   }
@@ -163,6 +165,21 @@ void FileReading::postOrder(Node* T)
   return;
 }
 
+void inOrder(Node* T)
+{
+  if (T == 0)
+  {
+    return;
+  }
+  else
+  {
+    inOrder(T->leftChild);
+    std::cout << "\'" << T->symbol << "\' " ;
+    inOrder(T->rightChild);
+  }
+  return;
+}
+
 void FileReading::putCodesInArray()
 {
   std::ifstream codesFile;
@@ -190,7 +207,6 @@ void FileReading::compress(std::string fileName, std::string compress)
   std::string line;
   std::vector<char> allBits;
   int filledTo = 0;
-  unsigned char byte = 0;
 
   putCodesInArray();
 
@@ -199,17 +215,13 @@ void FileReading::compress(std::string fileName, std::string compress)
   {
     while(getline(file, line))
     {
-      std::cout<< "Line: \'" << line << "\'" << std::endl;
       //put all codes into an array
       for(int i = 0; i < line.length(); i++)
       {
-        std::cout<< "Code: " << prefixChar[line[i]] << std::endl;
-
         std::string code = prefixChar[line[i]];
         for(int j = 0; j < code.length(); j++)
         {
-          std::cout<< "filledTo: " << filledTo << std::endl;
-        //  allBits[filledTo] = code[j];
+          allBits.push_back(code[j]);
           filledTo++;
         }
       }
@@ -217,21 +229,21 @@ void FileReading::compress(std::string fileName, std::string compress)
     //split array into groups of 8
     //Source: https://stackoverflow.com/questions/29123959/convert-a-char-array-of-0-and-1-to-bytes-in-c
     int count = 0;
-    uint16_t comp[(filledTo + 8 - 1) / 8];
+    uint8_t comp[(filledTo + 8 - 1) / 8];
 
     for(int j = 0; j < filledTo; j += 8)
     {
+      unsigned char byte = 0;
       for(int i = j; i < (j + 8); ++i)
       {
-        if(allBits[i] == '1') byte |= 1 << (7 - i);
+        if(allBits[i] == '1'){
+          byte |= 1 << (7 - i%8);
+        }
       }
       compressedFile<<byte;
       comp[count] = byte;
       count++;
     }
-
-    //Place bytes into new array. Size of array is rounded up
-
   }
   compressedFile.close();
 }
@@ -242,23 +254,70 @@ void FileReading::decompress(std::string decompress, std::string compressed)
   decompressedFile.open(decompress);
   std::ifstream compressedFile;
   compressedFile.open(compressed, std::ifstream::binary);
-  std::string code;
-
+  std::string bitLine;
+  Node* n = root;
+  char c;
   if(compressedFile.is_open())
   {
-    while(std::getline(compressedFile, code, ' ') || std::getline(compressedFile, code))
+    //Recieved help with reading/writing bits from Prashil Bhimani
+    //Source: https://stackoverflow.com/questions/7349689/how-to-print-using-cout-the-way-a-number-is-stored-in-memory
+    std::vector<int> bits;
+    std::vector<std::bitset<8>> bytes;
+    int numBytes = 0;
+    while(compressedFile.read(&c, 1))
     {
-      for(int i = 0; i < 256; i++)
+      std::bitset<8> x(c);
+      bytes.insert(bytes.begin(), x);
+    }
+
+
+    for(int i = 0; i < bytes.size(); i++)
+    {
+      std::bitset<8> oneByte = bytes[i];
+      for(int j = 0; j < oneByte.size(); j++)
       {
-        if(code == prefixChar[i])
+        if(oneByte[j] == 1)
         {
-          decompressedFile<< char(i);
+          bits.insert(bits.begin(), 1);
+        }
+        if(oneByte[j] == 0)
+        {
+          bits.insert(bits.begin(), 0);
         }
       }
     }
-  }
 
-  decompressedFile.close();
+    n = root;
+    for(int i = 0; i < bits.size(); i++)
+    {
+      if(bits[i] == 1)
+      {
+        if(n->leftChild == NULL)
+        {
+            decompressedFile<< n->symbol;
+            n = root;
+            i--;
+          }
+          else
+          {
+            n = n->leftChild;
+          }
+        }
+        else if(bits[i] == 0)
+        {
+          if(n->rightChild == NULL)
+          {
+              decompressedFile<< n->symbol;
+              n = root;
+              i--;
+            }
+            else
+            {
+              n = n->rightChild;
+            }
+        }
+      }
+    }
 }
 
 void FileReading::readAndCompress(std::string inputFile, std::string compressedFile, std::string decompressedFile)
