@@ -22,12 +22,12 @@ int main(int argc, char *argv[])
 
 void RLE(string S,char* outFile) 
 { 
+    int l = S.length();
     ofstream fileo;
     fileo.open(outFile, ofstream::out | ofstream::app);  // open latest saved version of the file
-    int n = S.length(); 
     for (int i = 0; i < n; i++) {  
         int counter = 1; //counter
-        while (i < n - 1 && S[i] == S[i + 1]) { //compare string values
+        while (i < l - 1 && S[i] == S[i + 1]) { //compare string values
             i++; 
             counter++; 
         } 
